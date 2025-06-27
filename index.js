@@ -6,6 +6,10 @@ dotenv.config()
 import rulesRouter from "./src/routes/rules.js";
 import { supabase } from "./src/config/supabaseClient.js"
 import rulesEngine from "./src/services/rulesEngine.js";
+import {
+  copilotRuntimeNodeHttpEndpoint,
+} from '@copilotkit/runtime';
+import { runtime, serviceAdapter } from "./src/utils/CopilotKit.js";
 
 const app = express();
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [];
@@ -40,6 +44,19 @@ app.use(async(req, res, next) => {
 
 // Mount routes
 app.use('/rules', rulesRouter);
+app.use('/api/v1/copilotkit', (req, res, next) => {
+  (async () => {
+    // const runtime = new CopilotRuntime();
+    const handler = copilotRuntimeNodeHttpEndpoint({
+      endpoint: '/copilotkit',
+      runtime,
+      serviceAdapter,
+    });
+ 
+    return handler(req, res);
+  })().catch(next);
+});
+
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
