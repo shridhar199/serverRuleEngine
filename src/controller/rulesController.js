@@ -5,7 +5,7 @@ import {
   fetchRulesData,
 } from "../utils/transformingRules.js";
 import { RulesService } from "../services/rulesService.js";
-
+import { createUser ,getAllUsers ,deleteUser } from "../services/keyclockService.js"
 export class RulesController {
   static async getAllRules(req, res) {
     try {
@@ -504,6 +504,45 @@ async function evaluateRules(req, res) {
   }
 }
 
+async function createUserController(req, res) {
+  try {
+    const userData = req.body;
+    console.log("userData",userData)
+    await createUser(userData);
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Create User Error:', error.response?.data || error.message);
+    res.status(500).json({
+      message: 'Failed to create user',
+      details: error.response?.data || error.message,
+    });
+  }
+}
+
+async function getAllUsersController(req, res) {
+  try {
+    const users = await getAllUsers();
+    res.json(users);
+  } catch (error) {
+    console.error('Failed to fetch users:', error.response?.data || error.message);
+    res.status(500).json({ message: 'Failed to fetch users' });
+  }
+}
+
+async function deleteUserController(req, res) {
+  const { id } = req.params;
+
+  try {
+    const result = await deleteUser(id);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({
+      message: 'User deletion failed',
+      error: error.message,
+    });
+  }
+}
+
 export {
   getAllRules,
   createRule,
@@ -511,4 +550,7 @@ export {
   getRuleByName,
   testRules,
   evaluateRules,
+  createUserController,
+  getAllUsersController,
+  deleteUserController
 };

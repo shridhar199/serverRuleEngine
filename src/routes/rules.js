@@ -6,7 +6,10 @@ import {
   getAllRules,
   testRules,
   evaluateRules,
-  RulesController
+  RulesController,
+  createUserController,
+  getAllUsersController,
+  deleteUserController
 } from "../controller/rulesController.js";
 
 const router = express.Router();
@@ -28,5 +31,7 @@ router.post('/update/:name', RulesController.updateRuleByName);
 router.delete("/delete/:name",RulesController.deleteRuleByName);
 router.get("/", RulesController.getAllRules);
 router.post("/", createRule);
-
+router.post('/user',createUserController)
+router.get('/users',getAllUsersController)
+router.delete('/user/:id', deleteUserController);
 export default router;
